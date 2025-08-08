@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TransactionApp.Api.Filters;
 using TransactionApp.Api.Middleware;
+using TransactionApp.Application.Configuration;
 using TransactionApp.Application.Interfaces;
 using TransactionApp.Application.Mapping;
 using TransactionApp.Application.Services;
@@ -20,6 +21,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
+
+builder.Services.Configure<CacheSettings>(
+    builder.Configuration.GetSection("CacheSettings"));
 
 builder.Services.AddSingleton<IMapper>(sp =>
 {

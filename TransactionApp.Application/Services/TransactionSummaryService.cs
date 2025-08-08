@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using TransactionApp.Application.Configuration;
 using TransactionApp.Application.DTOs;
 using TransactionApp.Application.Interfaces;
 using TransactionApp.Application.Utilities;
@@ -11,14 +13,12 @@ namespace TransactionApp.Application.Services
     public class TransactionSummaryService(
         ITransactionRepository repository,
         ICustomCache cache,
+        IOptions<CacheSettings> cacheSettings,
         ILogger<TransactionSummaryService> logger)
         : ITransactionSummaryService
     {
-        public async Task<TransactionSummaryDto> GetSummaryByUserAndTypeAsync(
-            string userId,
-            TransactionTypeEnum? type,
-            DateTime? startDate,
-            DateTime? endDate)
+        private readonly int _cacheDurationMinutes = cacheSettings.Value.TransactionSummaryCacheDurationMinutes;
+        public async Task<TransactionSummaryDto> GetSummaryByUserAndTypeAsync(string userId, TransactionTypeEnum? type, DateTime? startDate, DateTime? endDate)
         {
             var cacheKey = CacheKeyHelper.GetCacheKey(userId, type, startDate, endDate);
 
@@ -43,7 +43,7 @@ namespace TransactionApp.Application.Services
                     EndDate = endDate
                 };
 
-                cache.Set(cacheKey, summary, TimeSpan.FromMinutes(10));
+                cache.Set(cacheKey, summary, TimeSpan.FromMinutes(_cacheDurationMinutes));
                 return summary;
             }
             catch (Exception ex)
