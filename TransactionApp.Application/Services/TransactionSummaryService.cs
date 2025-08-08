@@ -18,9 +18,9 @@ namespace TransactionApp.Application.Services
         : ITransactionSummaryService
     {
         private readonly int _cacheDurationMinutes = cacheSettings.Value.TransactionSummaryCacheDurationMinutes;
-        public async Task<TransactionSummaryDto> GetSummaryByUserAndTypeAsync(string userId, TransactionTypeEnum? type, DateTime? startDate, DateTime? endDate)
+        public async Task<TransactionSummaryDto> GetSummaryByUserAndTypeAsync(string userId, TransactionTypeEnum? transactionType, DateTime? startDate, DateTime? endDate)
         {
-            var cacheKey = CacheKeyHelper.GetCacheKey(userId, type, startDate, endDate);
+            var cacheKey = CacheKeyHelper.GetCacheKey(userId, transactionType, startDate, endDate);
 
             if (cache.TryGetValue(cacheKey, out TransactionSummaryDto cached))
             {
@@ -32,12 +32,12 @@ namespace TransactionApp.Application.Services
             {
                 logger.LogInformation(LogMessages.FetchingTransactionsSummaryFromDb);
 
-                var total = await repository.GetTotalAmountByUserAndTypeAsync(userId, type, startDate, endDate);
+                var total = await repository.GetTotalAmountByUserAndTypeAsync(userId, transactionType, startDate, endDate);
 
                 var summary = new TransactionSummaryDto
                 {
                     UserId = userId,
-                    Type = type,
+                    TransactionType = transactionType,
                     TotalAmount = total,
                     StartDate = startDate,
                     EndDate = endDate

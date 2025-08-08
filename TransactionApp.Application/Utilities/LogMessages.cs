@@ -33,9 +33,9 @@ namespace TransactionApp.Application.Utilities
         public const string TransactionNotFound = "Transaction with ID {TransactionId} not found";
 
         public const string FetchingTransactionUserWarning = "UserId is required.";
-        public const string FetchingTransactionsSummary = "Fetching transactions for user: {UserId}, type: {Type}";
+        public const string FetchingTransactionsSummary = "Fetching transactions for user: {UserId}, transaction type: {Type}";
         public const string FetchingTransactionsSummaryFromDb = "Fetching transactions from the database";
-        public const string FetchingTransactionSummaryFromCache = "Fetching transactions from teh Cache for the key: {CacheKey}";
+        public const string FetchingTransactionSummaryFromCache = "Fetching transactions from the cache for the key: {CacheKey}";
         public const string FetchingTransactionSummaryError = "Failed to compute transaction summary";
 
         public const string TransactionCacheCleared = "Cleared cache with prefix: {CachePrefix}";
