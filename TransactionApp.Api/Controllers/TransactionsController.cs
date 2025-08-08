@@ -10,6 +10,18 @@ namespace TransactionApp.Api.Controllers
     public class TransactionsController(ITransactionService service, ILogger<TransactionsController> logger)
         : ControllerBase
     {
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateTransactionDto dto)
+        {
+            logger.LogInformation(LogMessages.CreatingTransaction, dto.UserId);
+
+            var created = await service.CreateAsync(dto);
+
+            logger.LogInformation(LogMessages.TransactionCreated, created.Id);
+
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
@@ -33,18 +45,6 @@ namespace TransactionApp.Api.Controllers
             logger.LogWarning(LogMessages.TransactionNotFound, id);
             
             return NotFound();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateTransactionDto dto)
-        {
-            logger.LogInformation(LogMessages.CreatingTransaction, dto.UserId);
-
-            var created = await service.CreateAsync(dto);
-
-            logger.LogInformation(LogMessages.TransactionCreated, created.Id);
-            
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
     }
 }

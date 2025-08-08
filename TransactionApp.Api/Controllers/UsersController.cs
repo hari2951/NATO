@@ -6,7 +6,7 @@ using TransactionApp.Application.Utilities;
 namespace TransactionApp.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UsersController(IUserService userService, ILogger<UsersController> logger) : ControllerBase
     {
         [HttpPost]
@@ -18,6 +18,15 @@ namespace TransactionApp.Api.Controllers
 
             logger.LogInformation(LogMessages.UserCreated, created.Id);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            logger.LogInformation(LogMessages.FetchingAllUsers);
+
+            var pagedResult = await userService.GetAllAsync(pageNumber, pageSize);
+            return Ok(pagedResult);
         }
 
         [HttpGet("{id}")]
@@ -66,15 +75,6 @@ namespace TransactionApp.Api.Controllers
 
             logger.LogInformation(LogMessages.UserDeleted, id);
             return NoContent();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
-        {
-            logger.LogInformation(LogMessages.FetchingAllUsers);
-
-            var pagedResult = await userService.GetAllAsync(pageNumber, pageSize);
-            return Ok(pagedResult);
         }
     }
 }
