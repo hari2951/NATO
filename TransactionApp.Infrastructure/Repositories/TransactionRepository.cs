@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TransactionApp.Domain.Entities;
+using TransactionApp.Domain.Enums;
 using TransactionApp.Domain.Interfaces;
 using TransactionApp.Infrastructure.Data;
 
@@ -22,9 +23,24 @@ namespace TransactionApp.Infrastructure.Repositories
             await context.Transactions.AddAsync(transaction);
         }
 
+
         public async Task SaveAsync()
         {
             await context.SaveChangesAsync();
+        }
+        public async Task<decimal> GetTotalAmountByUserAndTypeAsync(string userId, TransactionTypeEnum type, DateTime? startDate, DateTime? endDate)
+        {
+            var query = context.Transactions
+                .AsNoTracking()
+                .Where(t => t.UserId == userId && t.TransactionType == type);
+
+            if (startDate.HasValue)
+                query = query.Where(t => t.CreatedAt >= startDate.Value);
+
+            if (endDate.HasValue)
+                query = query.Where(t => t.CreatedAt <= endDate.Value);
+
+            return await query.SumAsync(t => t.Amount);
         }
     }
 }

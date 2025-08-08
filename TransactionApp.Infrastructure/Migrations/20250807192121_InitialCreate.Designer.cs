@@ -12,7 +12,7 @@ using TransactionApp.Infrastructure.Data;
 namespace TransactionApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250807110234_InitialCreate")]
+    [Migration("20250807192121_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -77,11 +77,13 @@ namespace TransactionApp.Infrastructure.Migrations
 
             modelBuilder.Entity("TransactionApp.Domain.Entities.Transaction", b =>
                 {
-                    b.HasOne("TransactionApp.Domain.Entities.User", null)
+                    b.HasOne("TransactionApp.Domain.Entities.User", "User")
                         .WithMany("Transactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TransactionApp.Domain.Entities.User", b =>

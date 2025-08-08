@@ -7,6 +7,7 @@ using TransactionApp.Api.Middleware;
 using TransactionApp.Application.Interfaces;
 using TransactionApp.Application.Mapping;
 using TransactionApp.Application.Services;
+using TransactionApp.Application.Utilities.Caching;
 using TransactionApp.Application.Validators;
 using TransactionApp.Domain.Interfaces;
 using TransactionApp.Infrastructure.Data;
@@ -44,6 +45,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddSingleton<ICustomCache, CustomMemoryCache>();
+builder.Services.AddScoped<ITransactionSummaryService, TransactionSummaryService>();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 

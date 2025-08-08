@@ -1,4 +1,5 @@
 ﻿using TransactionApp.Domain.Entities;
+using TransactionApp.Domain.Enums;
 
 namespace TransactionApp.Domain.Interfaces
 {
@@ -8,5 +9,6 @@ namespace TransactionApp.Domain.Interfaces
         Task<Transaction> GetByIdAsync(int id);
         Task AddAsync(Transaction transaction);
         Task SaveAsync();
+        Task<decimal> GetTotalAmountByUserAndTypeAsync(string userId, TransactionTypeEnum type, DateTime? startDate, DateTime? endDate);
     }
 }
