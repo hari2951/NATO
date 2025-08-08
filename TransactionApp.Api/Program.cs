@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using TransactionApp.Api.Filters;
 using TransactionApp.Api.Middleware;
 using TransactionApp.Application.Interfaces;
@@ -39,7 +40,12 @@ builder.Services.AddControllers()
         options.Filters.Add(new ValidationFilter());
     });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Transaction API", Version = "v1" });
+    c.UseInlineDefinitionsForEnums();
+});
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

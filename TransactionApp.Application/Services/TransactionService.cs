@@ -1,55 +1,94 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using TransactionApp.Application.DTOs;
+using TransactionApp.Application.Exceptions;
 using TransactionApp.Application.Interfaces;
 using TransactionApp.Application.Utilities;
 using TransactionApp.Application.Utilities.Caching;
 using TransactionApp.Domain.Entities;
 using TransactionApp.Domain.Enums;
 using TransactionApp.Domain.Interfaces;
+using TransactionApp.Infrastructure.Repositories;
 
 namespace TransactionApp.Application.Services
 {
     public class TransactionService(
-        ITransactionRepository repository,
-        IMapper mapper,
-        ILogger<TransactionService> logger,
-        ICustomCache cache)
-        : ITransactionService
+      ITransactionRepository repository,
+      IUserRepository userRepository,
+      IMapper mapper,
+      ILogger<TransactionService> logger,
+      ICustomCache cache)
+      : ITransactionService
     {
         public async Task<TransactionDto> CreateAsync(CreateTransactionDto dto)
         {
-            logger.LogInformation(LogMessages.CreatingTransaction, dto.UserId);
+            try
+            {
+                logger.LogInformation(LogMessages.CreatingTransaction, dto.UserId);
 
-            var transaction = mapper.Map<Transaction>(dto);
-            transaction.CreatedAt = DateTime.UtcNow;
+                var user = await userRepository.GetByIdAsync(dto.UserId);
+                if (user == null)
+                {
+                    throw new NotFoundException($"User with ID '{dto.UserId}' does not exist.");
+                }
 
-            await repository.AddAsync(transaction);
-            await repository.SaveAsync();
+                var transaction = mapper.Map<Transaction>(dto);
+                transaction.CreatedAt = DateTime.UtcNow;
 
-            ClearCache(transaction.UserId, transaction.TransactionType);
+                await repository.AddAsync(transaction);
+                await repository.SaveAsync();
 
-            logger.LogInformation(LogMessages.TransactionCreated, transaction.Id);
+                ClearCache(transaction.UserId, transaction.TransactionType);
 
-            return mapper.Map<TransactionDto>(transaction);
+                logger.LogInformation(LogMessages.TransactionCreated, transaction.Id);
+
+                return mapper.Map<TransactionDto>(transaction);
+            }
+            catch (NotFoundException ex)
+            {
+                logger.LogWarning(ex, "Validation failed while creating transaction.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while creating a transaction for user {UserId}", dto.UserId);
+                throw;
+            }
         }
 
-        public async Task<IEnumerable<TransactionDto>> GetAllAsync() 
-            => mapper.Map<IEnumerable<TransactionDto>>(await repository.GetAllAsync());
+        public async Task<IEnumerable<TransactionDto>> GetAllAsync()
+        {
+            try
+            {
+                return mapper.Map<IEnumerable<TransactionDto>>(await repository.GetAllAsync());
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while retrieving all transactions.");
+                throw;
+            }
+        }
 
         public async Task<TransactionDto> GetByIdAsync(int id)
         {
-            logger.LogInformation(LogMessages.FetchingTransaction, id);
-
-            var transaction = await repository.GetByIdAsync(id);
-            if (transaction is not null)
+            try
             {
-                return mapper.Map<TransactionDto>(transaction);
-            }
+                logger.LogInformation(LogMessages.FetchingTransaction, id);
 
-            logger.LogWarning(LogMessages.TransactionNotFound, id);
-            
-            return null;
+                var transaction = await repository.GetByIdAsync(id);
+                if (transaction is not null)
+                {
+                    return mapper.Map<TransactionDto>(transaction);
+                }
+
+                logger.LogWarning(LogMessages.TransactionNotFound, id);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while retrieving transaction with ID {TransactionId}", id);
+                throw;
+            }
         }
 
         private void ClearCache(string userId, TransactionTypeEnum transactionType)

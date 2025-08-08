@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using TransactionApp.Application.Exceptions;
 
 namespace TransactionApp.Api.Middleware
 {
@@ -21,11 +22,20 @@ namespace TransactionApp.Api.Middleware
         private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            var statusCode = (int)HttpStatusCode.InternalServerError;
+            var message = "An unexpected error occurred. Please try again later.";
+
+            if (exception is NotFoundException notFoundException)
+            {
+                statusCode = StatusCodes.Status404NotFound;
+                message = notFoundException.Message;
+            }
+
+            context.Response.StatusCode = statusCode;
 
             var result = JsonSerializer.Serialize(new
             {
-                error = "An unexpected error occurred. Please try again later."
+                error = message
             });
 
             await context.Response.WriteAsync(result);
