@@ -15,7 +15,7 @@ namespace TransactionApp.Application.Services
     {
         public async Task<TransactionSummaryDto> GetSummaryByUserAndTypeAsync(
             string userId,
-            TransactionTypeEnum type,
+            TransactionTypeEnum? type,
             DateTime? startDate,
             DateTime? endDate)
         {
@@ -36,8 +36,10 @@ namespace TransactionApp.Application.Services
                 var summary = new TransactionSummaryDto
                 {
                     UserId = userId,
-                    Type = type.ToString(),
-                    TotalAmount = total
+                    Type = type,
+                    TotalAmount = total,
+                    StartDate = startDate,
+                    EndDate = endDate
                 };
 
                 cache.Set(cacheKey, summary, TimeSpan.FromMinutes(10));
@@ -49,7 +51,5 @@ namespace TransactionApp.Application.Services
                 throw;
             }
         }
-
-      
     }
 }

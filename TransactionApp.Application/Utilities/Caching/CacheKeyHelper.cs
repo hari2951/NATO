@@ -4,14 +4,18 @@ namespace TransactionApp.Application.Utilities.Caching
 {
     public static class CacheKeyHelper
     {
-        public static string GetCachePrefix(string userId, TransactionTypeEnum type)
+        public static string GetCachePrefix(string userId)
         {
-            return $"TransactionSummary_{userId}_{type}";
+            return $"TransactionSummary_{userId}";
         }
 
-        public static string GetCacheKey(string userId, TransactionTypeEnum type, DateTime? startDate, DateTime? endDate)
+        public static string GetCacheKey(string userId, TransactionTypeEnum? type, DateTime? startDate, DateTime? endDate)
         {
-            var key = GetCachePrefix(userId, type);
+            var key = GetCachePrefix(userId);
+            if (type.HasValue)
+            {
+                key += $"_{type}";
+            }
 
             if (startDate.HasValue)
             {

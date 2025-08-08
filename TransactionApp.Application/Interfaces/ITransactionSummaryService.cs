@@ -5,6 +5,6 @@ namespace TransactionApp.Application.Interfaces
 {
     public interface ITransactionSummaryService
     {
-        Task<TransactionSummaryDto> GetSummaryByUserAndTypeAsync(string userId, TransactionTypeEnum type, DateTime? startDate, DateTime? endDate);
+        Task<TransactionSummaryDto> GetSummaryByUserAndTypeAsync(string userId, TransactionTypeEnum? type, DateTime? startDate, DateTime? endDate);
     }
 }

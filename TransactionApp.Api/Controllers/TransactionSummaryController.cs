@@ -14,7 +14,7 @@ namespace TransactionApp.Api.Controllers
         [HttpGet("by-user-and-type")]
         public async Task<IActionResult> GetByUserAndType(
             [FromQuery] string userId,
-            [FromQuery] TransactionTypeEnum transactionType,
+            [FromQuery] TransactionTypeEnum? transactionType,
             [FromQuery] DateTime? startDate,
             [FromQuery] DateTime? endDate)
         {
@@ -24,18 +24,10 @@ namespace TransactionApp.Api.Controllers
                 return BadRequest("Parameter 'userId' is required.");
             }
 
-            try
-            {
-                var result = await transactionSummaryService.GetSummaryByUserAndTypeAsync(
-                    userId, transactionType, startDate, endDate);
+            var result = await transactionSummaryService.GetSummaryByUserAndTypeAsync(
+                userId, transactionType, startDate, endDate);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error in GetByUserAndType");
-                return StatusCode(500, "An unexpected error occurred.");
-            }
+            return Ok(result);
         }
     }
 }

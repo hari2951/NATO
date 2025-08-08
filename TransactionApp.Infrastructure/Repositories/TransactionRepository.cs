@@ -28,11 +28,14 @@ namespace TransactionApp.Infrastructure.Repositories
         {
             await context.SaveChangesAsync();
         }
-        public async Task<decimal> GetTotalAmountByUserAndTypeAsync(string userId, TransactionTypeEnum type, DateTime? startDate, DateTime? endDate)
+        public async Task<decimal> GetTotalAmountByUserAndTypeAsync(string userId, TransactionTypeEnum? type, DateTime? startDate, DateTime? endDate)
         {
             var query = context.Transactions
                 .AsNoTracking()
-                .Where(t => t.UserId == userId && t.TransactionType == type);
+                .Where(t => t.UserId == userId);
+            
+            if (type.HasValue)
+                query = query.Where(t => t.TransactionType == type);
 
             if (startDate.HasValue)
                 query = query.Where(t => t.CreatedAt >= startDate.Value);

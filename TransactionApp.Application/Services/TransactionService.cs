@@ -93,7 +93,7 @@ namespace TransactionApp.Application.Services
 
         private void ClearCache(string userId, TransactionTypeEnum transactionType)
         {
-            var prefix = CacheKeyHelper.GetCachePrefix(userId, transactionType);
+            var prefix = CacheKeyHelper.GetCachePrefix(userId);
             cache.RemoveByPrefix(prefix);
             logger.LogInformation("Cleared cache with prefix: {CachePrefix}", prefix);
         }
