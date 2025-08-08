@@ -7,8 +7,18 @@ namespace TransactionApp.Infrastructure.Repositories
 {
     public class UserRepository(AppDbContext context) : IUserRepository
     {
-        public async Task<IEnumerable<User>> GetAllAsync()
-            => await context.Users.ToListAsync();
+        public async Task<(IEnumerable<User> Users, int TotalCount)> GetAllAsync(int pageNumber, int pageSize)
+        {
+            var query = context.Users.AsQueryable();
+
+            var totalCount = await query.CountAsync();
+            var users = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (users, totalCount);
+        }
 
         public async Task<User> GetByIdAsync(string id)
             => await context.Users.FindAsync(id);

@@ -11,10 +11,12 @@ namespace TransactionApp.Api.Controllers
         : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var transactions = await service.GetAllAsync();
-            return Ok(transactions);
+            logger.LogInformation(LogMessages.FetchingAllTransactions);
+
+            var pagedResult = await service.GetAllAsync(pageNumber, pageSize);
+            return Ok(pagedResult);
         }
 
         [HttpGet("{id}")]

@@ -8,9 +8,17 @@ namespace TransactionApp.Infrastructure.Repositories
 {
     public class TransactionRepository(AppDbContext context) : ITransactionRepository
     {
-        public async Task<IEnumerable<Transaction>> GetAllAsync()
+        public async Task<(IEnumerable<Transaction> Transactions, int TotalCount)> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await context.Transactions.ToListAsync();
+            var query = context.Transactions.Include(t => t.User).AsQueryable();
+
+            var totalCount = await query.CountAsync();
+            var transactions = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (transactions, totalCount);
         }
 
         public async Task<Transaction> GetByIdAsync(int id)

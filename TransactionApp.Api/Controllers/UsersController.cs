@@ -69,12 +69,12 @@ namespace TransactionApp.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             logger.LogInformation(LogMessages.FetchingAllUsers);
 
-            var users = await userService.GetAllAsync();
-            return Ok(users);
+            var pagedResult = await userService.GetAllAsync(pageNumber, pageSize);
+            return Ok(pagedResult);
         }
     }
 }

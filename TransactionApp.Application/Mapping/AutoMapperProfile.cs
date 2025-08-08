@@ -8,9 +8,11 @@ namespace TransactionApp.Application.Mapping
     {
         public AutoMapperProfile()
         {
-            CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, UserDto>();
             CreateMap<CreateUserDto, User>();
-            CreateMap<Transaction, TransactionDto>().ReverseMap();
+            CreateMap<Transaction, TransactionDto>()
+                .ForMember(dest => dest.FullName,
+                    opt => opt.MapFrom(src => src.User != null ? $"{src.User.FirstName} {src.User.LastName}" : string.Empty));
             CreateMap<CreateTransactionDto, Transaction>();
         }
     }

@@ -5,7 +5,7 @@ namespace TransactionApp.Domain.Interfaces
 {
     public interface ITransactionRepository
     {
-        Task<IEnumerable<Transaction>> GetAllAsync();
+        Task<(IEnumerable<Transaction> Transactions, int TotalCount)> GetAllAsync(int pageNumber, int pageSize);
         Task<Transaction> GetByIdAsync(int id);
         Task AddAsync(Transaction transaction);
         Task SaveAsync();

@@ -56,11 +56,21 @@ namespace TransactionApp.Application.Services
             }
         }
 
-        public async Task<IEnumerable<TransactionDto>> GetAllAsync()
+        public async Task<PagedResult<TransactionDto>> GetAllAsync(int pageNumber, int pageSize)
         {
             try
             {
-                return mapper.Map<IEnumerable<TransactionDto>>(await repository.GetAllAsync());
+                logger.LogInformation(LogMessages.FetchingAllTransactionsDetails, pageNumber, pageSize);
+                var (transactions, totalCount) = await repository.GetAllAsync(pageNumber, pageSize);
+                var dtos = mapper.Map<IEnumerable<TransactionDto>>(transactions);
+
+                return new PagedResult<TransactionDto>
+                {
+                    Items = dtos,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
             }
             catch (Exception ex)
             {

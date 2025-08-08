@@ -16,11 +16,13 @@
         public const string UserDeleted = "User deleted: {UserId}";
 
         public const string FetchingAllUsers = "Fetching all users";
+        public const string FetchingAllTransactions = "Fetching all transactions";
 
         public const string CreatingTransaction = "Creating new transaction for user {UserId}";
         public const string TransactionCreated = "Transaction created with ID {TransactionId}";
 
         public const string FetchingTransaction = "Fetching transaction with ID {TransactionId}";
+        public const string FetchingAllTransactionsDetails = "Fetching all transactions (page {PageNumber}, size {PageSize})";
         public const string TransactionNotFound = "Transaction with ID {TransactionId} not found";
     }
 }

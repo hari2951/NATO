@@ -1,25 +1,31 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TransactionApp.Application.DTOs;
 using TransactionApp.Application.Interfaces;
 using TransactionApp.Application.Utilities;
 using TransactionApp.Domain.Entities;
 using TransactionApp.Domain.Interfaces;
-using TransactionApp.Infrastructure.Data;
 
 namespace TransactionApp.Application.Services
 {
     public class UserService(IUserRepository userRepository, IMapper mapper, ILogger<UserService> logger)
         : IUserService
     {
-        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        public async Task<PagedResult<UserDto>> GetAllAsync(int pageNumber, int pageSize)
         {
             try
             {
                 logger.LogInformation(LogMessages.FetchingAllUsers);
-                var users = await userRepository.GetAllAsync();
-                return mapper.Map<IEnumerable<UserDto>>(users);
+                var (users, totalCount) = await userRepository.GetAllAsync(pageNumber, pageSize);
+                var userDtos = mapper.Map<IEnumerable<UserDto>>(users);
+
+                return new PagedResult<UserDto>
+                {
+                    Items = userDtos,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
             }
             catch (Exception ex)
             {
