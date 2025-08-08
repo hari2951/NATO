@@ -32,6 +32,7 @@ builder.Services.AddSingleton<IMapper>(sp =>
     return config.CreateMapper();
 });
 builder.Services.AddValidatorsFromAssemblyContaining<CreateUserDtoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTransactionDtoValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddControllers()

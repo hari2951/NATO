@@ -29,7 +29,7 @@ namespace TransactionApp.Application.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to fetch all users");
+                logger.LogError(ex, LogMessages.FailedFetchingAllUsers);
                 throw;
             }
         }
@@ -50,7 +50,7 @@ namespace TransactionApp.Application.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to fetch user with ID: {UserId}", id);
+                logger.LogError(ex, LogMessages.FailedFetchingUser, id);
                 throw;
             }
         }
@@ -72,7 +72,7 @@ namespace TransactionApp.Application.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to create user: {UserName}", dto.FullName);
+                logger.LogError(ex, LogMessages.FailedCreatingUser, dto.FullName);
                 throw;
             }
         }
@@ -102,7 +102,7 @@ namespace TransactionApp.Application.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to update user with ID: {UserId}", id);
+                logger.LogError(ex, LogMessages.FailedUpdatingUser, id);
                 throw;
             }
         }
@@ -128,7 +128,7 @@ namespace TransactionApp.Application.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to delete user with ID: {UserId}", id);
+                logger.LogError(ex, LogMessages.FailedDeletingUser, id);
                 throw;
             }
         }

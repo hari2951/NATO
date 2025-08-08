@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using TransactionApp.Application.DTOs;
 using TransactionApp.Application.Interfaces;
+using TransactionApp.Application.Utilities;
 using TransactionApp.Application.Utilities.Caching;
 using TransactionApp.Domain.Enums;
 using TransactionApp.Domain.Interfaces;
@@ -23,15 +24,15 @@ namespace TransactionApp.Application.Services
 
             if (cache.TryGetValue(cacheKey, out TransactionSummaryDto cached))
             {
-                logger.LogInformation("Cache hit for key: {CacheKey}", cacheKey);
+                logger.LogInformation(LogMessages.FetchingTransactionSummaryFromCache, cacheKey);
                 return cached;
             }
 
             try
             {
-                logger.LogInformation("Fetching transactions for user: {UserId}, type: {Type}", userId, type);
-                var total = await repository.GetTotalAmountByUserAndTypeAsync(userId, type, startDate, endDate);
+                logger.LogInformation(LogMessages.FetchingTransactionsSummaryFromDb);
 
+                var total = await repository.GetTotalAmountByUserAndTypeAsync(userId, type, startDate, endDate);
 
                 var summary = new TransactionSummaryDto
                 {
@@ -47,7 +48,7 @@ namespace TransactionApp.Application.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Failed to compute transaction summary");
+                logger.LogError(ex, LogMessages.FetchingTransactionSummaryError);
                 throw;
             }
         }

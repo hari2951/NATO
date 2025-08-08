@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TransactionApp.Application.Interfaces;
+using TransactionApp.Application.Utilities;
 using TransactionApp.Domain.Enums;
 
 namespace TransactionApp.Api.Controllers
@@ -20,9 +21,11 @@ namespace TransactionApp.Api.Controllers
         {
             if (string.IsNullOrWhiteSpace(userId))
             {
-                logger.LogWarning("Missing required parameter: userId");
-                return BadRequest("Parameter 'userId' is required.");
+                logger.LogWarning(LogMessages.FetchingTransactionUserWarning);
+                return BadRequest(LogMessages.FetchingTransactionUserWarning);
             }
+
+            logger.LogInformation(LogMessages.FetchingTransactionsSummary, userId, transactionType?.ToString() ?? "All");
 
             var result = await transactionSummaryService.GetSummaryByUserAndTypeAsync(
                 userId, transactionType, startDate, endDate);

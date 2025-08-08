@@ -8,17 +8,16 @@ using TransactionApp.Application.Utilities.Caching;
 using TransactionApp.Domain.Entities;
 using TransactionApp.Domain.Enums;
 using TransactionApp.Domain.Interfaces;
-using TransactionApp.Infrastructure.Repositories;
 
 namespace TransactionApp.Application.Services
 {
     public class TransactionService(
-      ITransactionRepository repository,
-      IUserRepository userRepository,
-      IMapper mapper,
-      ILogger<TransactionService> logger,
-      ICustomCache cache)
-      : ITransactionService
+    ITransactionRepository repository,
+    IUserRepository userRepository,
+    IMapper mapper,
+    ILogger<TransactionService> logger,
+    ICustomCache cache)
+    : ITransactionService
     {
         public async Task<TransactionDto> CreateAsync(CreateTransactionDto dto)
         {
@@ -29,7 +28,7 @@ namespace TransactionApp.Application.Services
                 var user = await userRepository.GetByIdAsync(dto.UserId);
                 if (user == null)
                 {
-                    throw new NotFoundException($"User with ID '{dto.UserId}' does not exist.");
+                    throw new NotFoundException(string.Format(LogMessages.UserNotPresent, dto.UserId));
                 }
 
                 var transaction = mapper.Map<Transaction>(dto);
@@ -46,12 +45,12 @@ namespace TransactionApp.Application.Services
             }
             catch (NotFoundException ex)
             {
-                logger.LogWarning(ex, "Validation failed while creating transaction.");
+                logger.LogWarning(ex, LogMessages.UserNotPresent, dto.UserId);
                 throw;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while creating a transaction for user {UserId}", dto.UserId);
+                logger.LogError(ex, LogMessages.FailedCreatingTransaction, dto.UserId);
                 throw;
             }
         }
@@ -74,7 +73,7 @@ namespace TransactionApp.Application.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while retrieving all transactions.");
+                logger.LogError(ex, LogMessages.FailedFetchingTransactions);
                 throw;
             }
         }
@@ -96,7 +95,7 @@ namespace TransactionApp.Application.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred while retrieving transaction with ID {TransactionId}", id);
+                logger.LogError(ex, LogMessages.FailedFetchingTransaction, id);
                 throw;
             }
         }
@@ -105,7 +104,7 @@ namespace TransactionApp.Application.Services
         {
             var prefix = CacheKeyHelper.GetCachePrefix(userId);
             cache.RemoveByPrefix(prefix);
-            logger.LogInformation("Cleared cache with prefix: {CachePrefix}", prefix);
+            logger.LogInformation(LogMessages.TransactionCacheCleared, prefix);
         }
     }
 }
