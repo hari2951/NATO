@@ -40,7 +40,8 @@ namespace TransactionApp.Application.Utilities
 
         public const string TransactionCacheCleared = "Cleared cache with prefix: {CachePrefix}";
 
-        public const string UserNotPresent = "User with ID {UserId} does not exist.";
+        public const string UserNotPresenForException = "User with ID {0} does not exist.";
+        public const string UserNotPresenForLog = "User with ID {UserId} does not exist.";
         public const string FailedCreatingTransaction = "An error occurred while creating a transaction for user {UserId}";
         public const string FailedFetchingTransaction = "An error occurred while retrieving transaction with ID {TransactionId}";
         public const string FailedFetchingTransactions = "An error occurred while retrieving all transactions.";

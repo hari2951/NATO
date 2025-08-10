@@ -26,9 +26,9 @@ namespace TransactionApp.Application.Services
                 logger.LogInformation(LogMessages.CreatingTransaction, dto.UserId);
 
                 var user = await userRepository.GetByIdAsync(dto.UserId);
-                if (user == null)
+                if (user is null)
                 {
-                    throw new NotFoundException(string.Format(LogMessages.UserNotPresent, dto.UserId));
+                    throw new NotFoundException(string.Format(LogMessages.UserNotPresenForException, dto.UserId));
                 }
 
                 var transaction = mapper.Map<Transaction>(dto);
@@ -45,7 +45,7 @@ namespace TransactionApp.Application.Services
             }
             catch (NotFoundException ex)
             {
-                logger.LogWarning(ex, LogMessages.UserNotPresent, dto.UserId);
+                logger.LogWarning(ex, LogMessages.UserNotPresenForLog, dto.UserId);
                 throw;
             }
             catch (Exception ex)
