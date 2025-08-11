@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionApp.Api", "TransactionApp.Api\TransactionApp.Api.csproj", "{B58C6F3F-D351-4ED1-AC41-87841B2EDFB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionApp.Api", "TransactionApp.Api\TransactionApp.Api.csproj", "{B58C6F3F-D351-4ED1-AC41-87841B2EDFB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionApp.Application", "TransactionApp.Application\TransactionApp.Application.csproj", "{9A06237F-F97D-4FBB-8FFC-1B1021423769}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionApp.Application", "TransactionApp.Application\TransactionApp.Application.csproj", "{9A06237F-F97D-4FBB-8FFC-1B1021423769}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionApp.Infrastructure", "TransactionApp.Infrastructure\TransactionApp.Infrastructure.csproj", "{76DF990D-6FBA-4646-A89E-E66DE09D7C30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionApp.Infrastructure", "TransactionApp.Infrastructure\TransactionApp.Infrastructure.csproj", "{76DF990D-6FBA-4646-A89E-E66DE09D7C30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionApp.Domain", "TransactionApp.Domain\TransactionApp.Domain.csproj", "{1DA12596-10AB-4E48-B9B2-A10AE9D7F078}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionApp.Domain", "TransactionApp.Domain\TransactionApp.Domain.csproj", "{1DA12596-10AB-4E48-B9B2-A10AE9D7F078}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionApp.Api.IntegrationTests", "TransactionApp.Api.IntegrationTests\TransactionApp.Api.IntegrationTests.csproj", "{B1989EE6-797D-4B75-8575-78C94B44E087}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionApp.Api.IntegrationTests", "TransactionApp.Api.IntegrationTests\TransactionApp.Api.IntegrationTests.csproj", "{B1989EE6-797D-4B75-8575-78C94B44E087}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionApp.UnitTests", "TransactionApp.UnitTests\TransactionApp.UnitTests.csproj", "{2313702D-5C05-457B-8F02-58A6D593D2FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{B1989EE6-797D-4B75-8575-78C94B44E087}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1989EE6-797D-4B75-8575-78C94B44E087}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1989EE6-797D-4B75-8575-78C94B44E087}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2313702D-5C05-457B-8F02-58A6D593D2FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2313702D-5C05-457B-8F02-58A6D593D2FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2313702D-5C05-457B-8F02-58A6D593D2FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2313702D-5C05-457B-8F02-58A6D593D2FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
