@@ -1,10 +1,12 @@
 ﻿using TransactionApp.Application.DTOs;
-using TransactionApp.Domain.Enums;
+using TransactionApp.Application.Utilities;
 
 namespace TransactionApp.Application.Interfaces
 {
     public interface ITransactionSummaryService
     {
-        Task<TransactionSummaryDto> GetSummaryByUserAndTypeAsync(string userId, TransactionTypeEnum? transactionType, DateTime? startDate, DateTime? endDate);
+        Task<PagedResult<UserTotalDto>> GetTransactionsPerUserAsync(int pageNumber, int pageSize);
+        Task<PagedResult<TransactionTypeTotalDto>> GetTransactionsPerTypeAsync(int pageNumber, int pageSize);
+        Task<PagedResult<TransactionDto>> GetHighVolumeTransactionsAsync(decimal threshold, int pageNumber, int pageSize);
     }
 }

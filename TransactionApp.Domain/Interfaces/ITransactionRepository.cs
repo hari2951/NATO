@@ -1,4 +1,6 @@
-﻿using TransactionApp.Domain.Entities;
+﻿using TransactionApp.Application.DTOs;
+using TransactionApp.Domain.DTOs;
+using TransactionApp.Domain.Entities;
 using TransactionApp.Domain.Enums;
 
 namespace TransactionApp.Domain.Interfaces
@@ -9,6 +11,7 @@ namespace TransactionApp.Domain.Interfaces
         Task<Transaction> GetByIdAsync(int id);
         Task AddAsync(Transaction transaction);
         Task SaveAsync();
-        Task<decimal> GetTotalAmountByUserAndTypeAsync(string userId, TransactionTypeEnum? transactionType, DateTime? startDate, DateTime? endDate);
+        Task<List<TransactionAmountRow>> GetAllTransactionsForSummaryAsync();
+        Task<(IEnumerable<Transaction> Items, int TotalCount)> GetHighVolumeAsync(decimal threshold, int pageNumber, int pageSize);
     }
 }

@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Net;
 using TransactionApp.Api.IntegrationTests.TestHost;
 using TransactionApp.Application.DTOs;
+using TransactionApp.Application.Utilities;
 using TransactionApp.Domain.Enums;
 
 namespace TransactionApp.Api.IntegrationTests
@@ -20,76 +21,65 @@ namespace TransactionApp.Api.IntegrationTests
         }
 
         [Fact]
-        public async Task GetByUserAndType_WithType_ReturnsTotalForType()
+        public async Task GetAllTransactions_PerUser_ReturnsPagedResults()
         {
-            var url = "/api/TransactionSummary/by-user-and-type?userId=user-1&transactionType=Credit";
+            // Act
+            var resp = await _client.GetAsync("/api/transactionsummary/total-per-user?pageNumber=1&pageSize=5");
 
-            var resp = await _client.GetAsync(url);
-
+            // Assert
             resp.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await resp.Content.ReadFromJsonAsync<PagedResult<UserTotalDto>>();
 
-            var summary = await resp.Content.ReadFromJsonAsync<TransactionSummaryDto>();
-            summary.Should().NotBeNull();
-            summary!.UserId.Should().Be("user-1");
-            summary.TransactionType.Should().Be(TransactionTypeEnum.Credit);
-            summary.TotalAmount.Should().Be(100.25m);
+            result.Should().NotBeNull();
+            result!.Items.Should().NotBeEmpty();
+            result.PageNumber.Should().Be(1);
+            result.PageSize.Should().Be(5);
+            result.TotalCount.Should().BeGreaterThan(0);
         }
 
         [Fact]
-        public async Task GetByUserAndType_NoType_ReturnsTotalForAll()
+        public async Task GetAllTransactions_PerType_ReturnsPagedResults()
         {
-            var url = "/api/TransactionSummary/by-user-and-type?userId=user-1";
+            // Act
+            var resp = await _client.GetAsync("/api/transactionsummary/total-per-type?pageNumber=1&pageSize=5");
 
-            var resp = await _client.GetAsync(url);
-            resp.EnsureSuccessStatusCode();
+            // Assert
+            resp.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await resp.Content.ReadFromJsonAsync<PagedResult<TransactionTypeTotalDto>>();
 
-            var summary = await resp.Content.ReadFromJsonAsync<TransactionSummaryDto>();
-            summary.Should().NotBeNull();
-            summary!.UserId.Should().Be("user-1");
-            summary.TransactionType.Should().BeNull();
-            summary.TotalAmount.Should().Be(150.25m);
-        }
-
-       
-        [Fact]
-        public async Task GetByUserAndType_WithDateRange_FiltersCorrectly()
-        {
-            var start = new DateTime(DateTime.UtcNow.Year, 2, 1).ToString("O");
-            var end = new DateTime(DateTime.UtcNow.Year, 2, 28).ToString("O");
-
-            var url = $"/api/TransactionSummary/by-user-and-type?userId=user-1&startDate={Uri.EscapeDataString(start)}&endDate={Uri.EscapeDataString(end)}";
-
-            var resp = await _client.GetAsync(url);
-            resp.EnsureSuccessStatusCode();
-
-            var summary = await resp.Content.ReadFromJsonAsync<TransactionSummaryDto>();
-            summary.Should().NotBeNull();
-            summary!.TotalAmount.Should().Be(50.00m);
+            result.Should().NotBeNull();
+            result!.Items.Should().NotBeEmpty();
+            result.PageNumber.Should().Be(1);
+            result.PageSize.Should().Be(5);
+            result.TotalCount.Should().BeGreaterThan(0);
         }
 
         [Fact]
-        public async Task GetByUserAndType_MissingUserId_Returns400()
+        public async Task GetHighVolumeTransactions_WithValidThreshold_ReturnsPagedResults()
         {
-            var url = "/api/TransactionSummary/by-user-and-type";
-            var resp = await _client.GetAsync(url);
+            // Act
+            var resp = await _client.GetAsync("/api/transactionsummary/high-volume?threshold=50&pageNumber=1&pageSize=5");
 
+            // Assert
+            resp.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await resp.Content.ReadFromJsonAsync<PagedResult<TransactionDto>>();
+
+            result.Should().NotBeNull();
+            result!.Items.Should().OnlyContain(t => t.Amount > 50);
+            result.PageNumber.Should().Be(1);
+            result.PageSize.Should().Be(5);
+        }
+
+        [Fact]
+        public async Task GetHighVolumeTransactions_WithInvalidThreshold_ReturnsBadRequest()
+        {
+            // Act
+            var resp = await _client.GetAsync("/api/transactionsummary/high-volume?threshold=0");
+
+            // Assert
             resp.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            var body = await resp.Content.ReadAsStringAsync();
-            body.Should().NotBeNullOrEmpty();
-        }
-
-        [Fact]
-        public async Task GetByUserAndType_NonExistentUser_ReturnsZeroTotal()
-        {
-            var url = "/api/TransactionSummary/by-user-and-type?userId=mario";
-            var resp = await _client.GetAsync(url);
-            resp.EnsureSuccessStatusCode();
-
-            var summary = await resp.Content.ReadFromJsonAsync<TransactionSummaryDto>();
-            summary.Should().NotBeNull();
-            summary!.UserId.Should().Be("mario");
-            summary.TotalAmount.Should().Be(0m);
+            var error = await resp.Content.ReadAsStringAsync();
+            error.Should().Contain("Threshold");
         }
     }
 }

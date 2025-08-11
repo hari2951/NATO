@@ -10,6 +10,6 @@ namespace TransactionApp.Application.Utilities.Caching
     {
         void Set<T>(string key, T value, TimeSpan expiration);
         bool TryGetValue<T>(string key, out T value);
-        void RemoveByPrefix(string prefix);
+        void RemoveByKey(string key);
     }
 }

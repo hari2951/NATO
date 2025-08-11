@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TransactionApp.Domain.DTOs;
 using TransactionApp.Domain.Entities;
-using TransactionApp.Domain.Enums;
 using TransactionApp.Domain.Interfaces;
 using TransactionApp.Infrastructure.Data;
 
@@ -22,36 +22,45 @@ namespace TransactionApp.Infrastructure.Repositories
         }
 
         public async Task<Transaction> GetByIdAsync(int id)
-        {
-            return await context.Transactions.FindAsync(id);
-        }
+            => await context.Transactions.FindAsync(id);
 
         public async Task AddAsync(Transaction transaction)
-        {
-            await context.Transactions.AddAsync(transaction);
-        }
+            => await context.Transactions.AddAsync(transaction);
 
 
         public async Task SaveAsync()
+            => await context.SaveChangesAsync();
+
+        public async Task<List<TransactionAmountRow>> GetAllTransactionsForSummaryAsync()
         {
-            await context.SaveChangesAsync();
+            return await context.Transactions
+                .AsNoTracking()
+                .Include(t => t.User)
+                .Select(t => new TransactionAmountRow
+                {
+                    UserId = t.UserId,
+                    FirstName = t.User.FirstName,
+                    LastName = t.User.LastName,
+                    TransactionType = t.TransactionType,
+                    Amount = t.Amount
+                })
+                .ToListAsync();
         }
-        public async Task<decimal> GetTotalAmountByUserAndTypeAsync(string userId, TransactionTypeEnum? transactionType, DateTime? startDate, DateTime? endDate)
+     
+        public async Task<(IEnumerable<Transaction> Items, int TotalCount)> GetHighVolumeAsync(decimal threshold, int pageNumber, int pageSize)
         {
             var query = context.Transactions
-                .AsNoTracking()
-                .Where(t => t.UserId == userId);
-            
-            if (transactionType.HasValue)
-                query = query.Where(t => t.TransactionType == transactionType);
+                .Where(t => t.Amount > threshold)
+                .OrderByDescending(t => t.Amount);
 
-            if (startDate.HasValue)
-                query = query.Where(t => t.CreatedAt >= startDate.Value);
+            var totalCount = await query.CountAsync();
 
-            if (endDate.HasValue)
-                query = query.Where(t => t.CreatedAt <= endDate.Value);
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
-            return await query.SumAsync(t => t.Amount);
+            return (items, totalCount);
         }
     }
 }

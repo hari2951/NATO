@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TransactionApp.Application.Interfaces;
 using TransactionApp.Application.Utilities;
-using TransactionApp.Domain.Enums;
 
 namespace TransactionApp.Api.Controllers
 {
@@ -12,24 +11,33 @@ namespace TransactionApp.Api.Controllers
         ILogger<TransactionSummaryController> logger)
         : ControllerBase
     {
-        [HttpGet("by-user-and-type")]
-        public async Task<IActionResult> GetByUserAndType(
-            [FromQuery] string userId,
-            [FromQuery] TransactionTypeEnum? transactionType,
-            [FromQuery] DateTime? startDate,
-            [FromQuery] DateTime? endDate)
+        [HttpGet("total-per-user")]
+        public async Task<IActionResult> GetTotalsPerUser([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            if (string.IsNullOrWhiteSpace(userId))
+            logger.LogInformation(LogMessages.FetchingTotalTransactionsPerUser, pageNumber, pageSize);
+            var result = await transactionSummaryService.GetTransactionsPerUserAsync(pageNumber, pageSize);
+            return Ok(result);
+        }
+
+        [HttpGet("total-per-type")]
+        public async Task<IActionResult> GetTotalsPerType([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            logger.LogInformation(LogMessages.FetchingTotalsTransactionsPerType, pageNumber, pageSize);
+            var result = await transactionSummaryService.GetTransactionsPerTypeAsync(pageNumber, pageSize);
+            return Ok(result);
+        }
+
+
+        [HttpGet("high-volume")]
+        public async Task<IActionResult> GetHighVolume([FromQuery] decimal threshold, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        {
+            if (threshold <= 0)
             {
-                logger.LogWarning(LogMessages.FetchingTransactionUserWarning);
-                return BadRequest(LogMessages.FetchingTransactionUserWarning);
+                return BadRequest(LogMessages.ThresholdWarning);
             }
 
-            logger.LogInformation(LogMessages.FetchingTransactionsSummary, userId, transactionType?.ToString() ?? "All");
-
-            var result = await transactionSummaryService.GetSummaryByUserAndTypeAsync(
-                userId, transactionType, startDate, endDate);
-
+            logger.LogInformation(LogMessages.FetchingHigVolumeTransactions, threshold, pageNumber, pageSize);
+            var result = await transactionSummaryService.GetHighVolumeTransactionsAsync(threshold, pageNumber, pageSize);
             return Ok(result);
         }
     }

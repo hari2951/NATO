@@ -35,9 +35,16 @@ namespace TransactionApp.Application.Utilities
         public const string FetchingTransactionUserWarning = "UserId is required.";
         public const string FetchingTransactionsSummary = "Fetching transactions for user: {UserId}, transaction type: {Type}";
         public const string FetchingTransactionsSummaryFromDb = "Fetching transactions from the database";
+        public const string FetchingTotalTransactionsPerUser = "Fetching transactions per user (page {Page}, size {Size})";
+        public const string FetchingTotalsTransactionsPerType = "Fetching transactions per transaction type (page {Page}, size {Size})";
+        public const string FetchingHigVolumeTransactions = "Fetching high-volume transactions greater than {Threshold} (page {Page}, size {Size})";
+        public const string FetchingHighVolume = "Fetching transactions with amount greater above {Type}";
         public const string FetchingTransactionSummaryFromCache = "Fetching transactions from the cache for the key: {CacheKey}";
         public const string FetchingTransactionSummaryError = "Failed to compute transaction summary";
+        public const string ThresholdWarning = "Threshold must be greater than 0.";
 
+        public const string CacheMiss = "Cache miss: {CacheKey}. Fetching transactions from DB.";
+        public const string CacheHit = "Cache hit: {CacheKey}";
         public const string TransactionCacheCleared = "Cleared cache with prefix: {CachePrefix}";
 
         public const string UserNotPresenForException = "User with ID {0} does not exist.";

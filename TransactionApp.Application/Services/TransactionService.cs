@@ -37,7 +37,7 @@ namespace TransactionApp.Application.Services
                 await repository.AddAsync(transaction);
                 await repository.SaveAsync();
 
-                ClearCache(transaction.UserId, transaction.TransactionType);
+                ClearCache();
 
                 logger.LogInformation(LogMessages.TransactionCreated, transaction.Id);
 
@@ -100,11 +100,11 @@ namespace TransactionApp.Application.Services
             }
         }
 
-        private void ClearCache(string userId, TransactionTypeEnum transactionType)
+        private void ClearCache()
         {
-            var prefix = CacheKeyHelper.GetCachePrefix(userId);
-            cache.RemoveByPrefix(prefix);
-            logger.LogInformation(LogMessages.TransactionCacheCleared, prefix);
+            const string transactionKey = Constants.AllTransactionsCacheKey;
+            cache.RemoveByKey(transactionKey);
+            logger.LogInformation(LogMessages.TransactionCacheCleared, transactionKey);
         }
     }
 }

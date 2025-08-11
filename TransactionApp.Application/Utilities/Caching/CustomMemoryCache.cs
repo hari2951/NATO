@@ -22,14 +22,10 @@ namespace TransactionApp.Application.Utilities.Caching
         public bool TryGetValue<T>(string key, out T value) 
             => _cache.TryGetValue(key, out value);
 
-        public void RemoveByPrefix(string prefix)
+        public void RemoveByKey(string key)
         {
-            var keysToRemove = _keys.Where(x => x.Key.StartsWith(prefix)).ToList();
-            foreach (var key in keysToRemove)
-            {
-                _cache.Remove(key.Key);
-                _keys.TryRemove(key.Key, out _);
-            }
+            _cache.Remove(key);
+            _keys.TryRemove(key, out _);
         }
     }
 }
